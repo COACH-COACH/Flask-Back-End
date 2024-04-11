@@ -20,7 +20,7 @@ def create_app():
     migrate.init_app(app, db)
     load_dotenv()
 
-    from .rest_api import main_view
+    from .views import main_view
     app.register_blueprint(main_view.bp)
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI")
     return app

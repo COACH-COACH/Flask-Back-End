@@ -9,7 +9,7 @@ bp = Blueprint('tester', __name__)
 def predict():
     if request.method == "GET":
         # 모든 User 객체 가져오기
-        users = User.query.all()
-        print(users)
+        products = Product.query.all()
+        print(products)
         # User 객체를 JSON으로 직렬화하여 반환
-        return jsonify([user.serialize() for user in users])
+        return jsonify([product.serialize() for product in products])
