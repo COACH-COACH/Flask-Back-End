@@ -132,3 +132,29 @@ class Payment(db.Model):
             'PAYMENT_QUARTER': self.PAYMENT_QUARTER,
             'CATEGORY': self.CATEGORY
         }
+    
+class Enrollment(db.Model):
+    __tablename__ = 'ENROLL_TB'
+
+    ID_PK = db.Column(db.Integer, primary_key=True, autoincrement=True)  # 상품 가입 ID
+    USER_ID_FK = db.Column(db.Integer, db.ForeignKey('USER_TB.ID_PK'), nullable=False)  # 고객 ID
+    PRODUCT_ID_FK = db.Column(db.Integer, db.ForeignKey('PRODUCT_TB.ID_PK'), nullable=False)  # 상품 ID
+    GOAL_ID_FK = db.Column(db.Integer, db.ForeignKey('GOAL_TB.ID_PK'), nullable=False)  # 목표 ID
+    START_DATE = db.Column(db.DateTime, nullable=False)  # 가입일
+    END_DATE = db.Column(db.DateTime)  # 만기일
+    ACCUMULATED_BALANCE = db.Column(db.DECIMAL(19, 0), nullable=False, default=0)  # 누적 입금액(최대 1경)
+    MATURITY_ST = db.Column(db.Boolean, nullable=False, default=False)  # 만기 여부 상태(0:진행 / 1:완료)
+    ACCOUNT_NUM = db.Column(db.String(100), nullable=False)  # 계좌번호
+
+    def serialize(self):
+        return {
+            'ID_PK': self.ID_PK,
+            'USER_ID_FK': self.USER_ID_FK,
+            'PRODUCT_ID_FK': self.PRODUCT_ID_FK,
+            'GOAL_ID_FK': self.GOAL_ID_FK,
+            'START_DATE': self.START_DATE.strftime('%Y-%m-%d') if self.START_DATE else None,
+            'END_DATE': self.END_DATE.strftime('%Y-%m-%d') if self.END_DATE else None,
+            'ACCUMULATED_BALANCE': int(self.ACCUMULATED_BALANCE) if self.ACCUMULATED_BALANCE is not None else None,
+            'MATURITY_ST': self.MATURITY_ST,
+            'ACCOUNT_NUM': self.ACCOUNT_NUM
+        }
