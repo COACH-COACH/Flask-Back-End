@@ -105,7 +105,7 @@ class Product(db.Model):
             'DEPOSIT_CYCLE': self.DEPOSIT_CYCLE.value if self.DEPOSIT_CYCLE else None,
             'INTEREST_RATE': str(self.INTEREST_RATE),
             'MATURITY': self.MATURITY,
-            'CREATE_DATE': self.CREATE_DATE.strftime('%Y-%m-%d'),
+            'CREATE_DATE': self.CREATE_DATE,
             'CAUTION': self.CAUTION,
             'LIMIT_AMT': self.LIMIT_AMT,
             'MEMBERSHIP_CONDITION': self.MEMBERSHIP_CONDITION,
