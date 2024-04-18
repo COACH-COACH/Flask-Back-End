@@ -17,6 +17,7 @@ def predict():
         users = User.query.all()
         print(users)
         # User 객체를 JSON으로 직렬화하여 반환
+
         return jsonify([user.serialize() for user in users])
     
 @bp.route('/timeSeries', methods=['POST'])
