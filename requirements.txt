@@ -37,3 +37,5 @@ gensim==3.8.3
 konlpy==0.5.2
 joblib==1.0.1
 konlpy
+keras
+tensorflow

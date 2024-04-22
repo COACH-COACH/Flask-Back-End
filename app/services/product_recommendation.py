@@ -157,7 +157,7 @@ def get_similar_products(combined_features, products, target_product_id, life_st
 # similar_customer_recommendation_for_exist_customer() : 비슷한 특징을 가지고 있는 고객이 과거에 보유했던 상품들 추려서 상위 3개씩 노출
 def similar_customer_recommendation_for_exist_customer(seq: str, life_stage: str, life_stage_df: pd.DataFrame):
     df = life_stage_df[life_stage]
-    customer_cluster = df.loc[df["SEQ"] == seq, "CLUSTER"].iloc[0]  # 가장 처음 분기
+    customer_cluster = df.loc[df["SEQ"] == seq, "CLUSTER"].iloc[0]
 
     # 접속한 고객과 동일한 군집에 속해 있는 고객 특징 추출
     cluster_deposits = df.loc[df["CLUSTER"]==customer_cluster, "PREVIOUS_DEPOSIT"].head(3).tolist()
