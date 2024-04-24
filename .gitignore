@@ -1,10 +1,8 @@
 .env
 */__pycache__/*
-<<<<<<< HEAD
 venv/
 migrations/
 __pycache__/
-=======
 *pyc
 venv/
 migrations/
@@ -12,4 +10,3 @@ coach-coach
 static
 
 for_flask/
->>>>>>> feature/#1
