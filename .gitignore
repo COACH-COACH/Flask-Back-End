@@ -2,4 +2,11 @@
 */__pycache__/*
 venv/
 migrations/
+__pycache__/
+*pyc
+venv/
+migrations/
+coach-coach
+static
+
 for_flask/
