@@ -17,6 +17,7 @@ def predict():
         users = User.query.all()
         print(users)
         # User 객체를 JSON으로 직렬화하여 반환
+
         return jsonify([user.serialize() for user in users])
     
 @bp.route('/timeSeries', methods=['POST'])
@@ -96,3 +97,4 @@ def do_prediction(json_data):
 
     # 다음 분기 소비 예측량
     return float(round(predicted_data[0][0], 2))
+
