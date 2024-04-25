@@ -6,6 +6,8 @@ from flask_sqlalchemy import SQLAlchemy
 from dotenv import load_dotenv
 import os
 import config
+import pandas as pd
+import numpy as np
 
 db = SQLAlchemy()
 migrate = Migrate()
@@ -20,7 +22,12 @@ def create_app():
     migrate.init_app(app, db)
     load_dotenv()
 
-    from .views import main_view
+    from .views import main_view, recommendation_view, news_view
     app.register_blueprint(main_view.bp)
+    app.register_blueprint(recommendation_view.recommendation)
+    app.register_blueprint(news_view.news)
     app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI")
+    print("Database URI:", app.config['SQLALCHEMY_DATABASE_URI'])
+
     return app
+

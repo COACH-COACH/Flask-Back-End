@@ -97,4 +97,3 @@ def do_prediction(json_data):
 
     # 다음 분기 소비 예측량
     return float(round(predicted_data[0][0], 2))
-

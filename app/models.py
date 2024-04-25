@@ -84,8 +84,8 @@ class Product(db.Model):
     PRODUCT_NAME = db.Column(db.String(300))                             # 상품명
     PRODUCT_TYPE = db.Column(db.Enum(ProductType))                       # 상품 종류
     ELIGIBILITY = db.Column(db.String(500))                              # 가입 대상
-    MAX_INTEREST_RATE = db.Column(db.DECIMAL(17, 2))                    # 최대 가입 금액
-    DEPOSIT_CYCLE = db.Column(db.Enum(DepositCycle))                    # 입금 주기
+    MAX_INTEREST_RATE = db.Column(db.DECIMAL(17, 2))                     # 최대 가입 금액
+    DEPOSIT_CYCLE = db.Column(db.Enum(DepositCycle))                     # 입금 주기
     INTEREST_RATE = db.Column(db.DECIMAL(5, 2))                          # 금리
     MATURITY = db.Column(db.Integer)
     CREATE_DATE = db.Column(db.Date)
@@ -132,7 +132,6 @@ class Payment(db.Model):
             'PAYMENT_QUARTER': self.PAYMENT_QUARTER,
             'CATEGORY': self.CATEGORY
         }
-    
 class Enrollment(db.Model):
     __tablename__ = 'ENROLL_TB'
 
@@ -152,8 +151,8 @@ class Enrollment(db.Model):
             'USER_ID_FK': self.USER_ID_FK,
             'PRODUCT_ID_FK': self.PRODUCT_ID_FK,
             'GOAL_ID_FK': self.GOAL_ID_FK,
-            'START_DATE': self.START_DATE.strftime('%Y-%m-%d') if self.START_DATE else None,
-            'END_DATE': self.END_DATE.strftime('%Y-%m-%d') if self.END_DATE else None,
+            'START_DATE': self.START_DATE.strftime('%Y-%m-%d %H:%M:%S') if self.START_DATE else None,
+            'END_DATE': self.END_DATE.strftime('%Y-%m-%d %H:%M:%S') if self.END_DATE else None,
             'ACCUMULATED_BALANCE': int(self.ACCUMULATED_BALANCE) if self.ACCUMULATED_BALANCE is not None else None,
             'MATURITY_ST': self.MATURITY_ST,
             'ACCOUNT_NUM': self.ACCOUNT_NUM
