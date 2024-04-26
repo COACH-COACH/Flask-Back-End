@@ -19,7 +19,7 @@ node {
         
        	stage('Push') {
             sh 'sudo docker login -u $DOCKER_USER_ID -p $DOCKER_USER_PASSWORD'
-            sh 'sudo push ${DOCKER_USER_ID}/flask-server:${BUILD_NUMBER}'      	
+            sh 'sudo docker push ${DOCKER_USER_ID}/flask-server:${BUILD_NUMBER}'      	
        	}
 
         stage('Deploy') {
