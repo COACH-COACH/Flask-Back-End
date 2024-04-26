@@ -25,7 +25,7 @@ node {
         stage('Deploy') {
             sshagent(credentials: ['ec2-flask-server-ssh']) {
                 sh 'ssh -o StrictHostKeyChecking=no ubuntu@52.78.60.160 "sudo docker rm -f docker-flask"'
-                sh 'ssh ubuntu@52.78.60.160 "sudo docker run --name docker-flask --env-file .env -e TZ=Asia/Seoul -p 80:80 -d -t \${DOCKER_USER_ID}/flask-server:\${BUILD_NUMBER}'
+                sh 'ssh ubuntu@52.78.60.160 "sudo docker run --name docker-flask --env-file .env -e TZ=Asia/Seoul -p 80:80 -d -t \${DOCKER_USER_ID}/flask-server:\${BUILD_NUMBER}"'
             }
         }
         
