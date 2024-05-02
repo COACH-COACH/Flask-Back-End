@@ -1,0 +1,12 @@
+# 실행 중 생겨난 파일들
+__pycache__/
+migrations/
+myproject/
+
+# 설정 관련 파일
+.gitignore
+.dockerignore
+.env
+
+*.txt
+!requirements.txt
