@@ -1,11 +1,23 @@
 # 라우트 및 라우트 핸들러를 정의하는 파일
-from flask import Blueprint, request, jsonify, current_app
+from flask import Flask, Blueprint, request, jsonify, current_app
 from app.models import *   # DB 모델 임포트
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
 from keras.models import Sequential
 from keras.layers import LSTM, Dense
+import logging
+
+# Flask 애플리케이션 설정
+app = Flask(__name__)
+app.logger.setLevel(logging.DEBUG)  # 로그 레벨 설정
+
+# 로거에 스트림 핸들러 추가
+handler = logging.StreamHandler()
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+app.logger.addHandler(handler)
 
 bp = Blueprint('tester', __name__)
 
@@ -22,18 +34,23 @@ def predict():
     
 @bp.route('/timeSeries', methods=['POST'])
 def process_data():
+    # 요청 로그 출력
+    app.logger.debug('Headers: %s', request.headers)
+    app.logger.debug('Body: %s', request.data.decode('utf-8'))  # 요청 본문을 UTF-8로 디코드하여 로그로 출력
+
     # JSON 데이터 받기
     json_data = request.get_json()
+    if json_data is None: # 올바르지 않은 JSON 형식
+        return jsonify({'error': 'Invalid JSON data'}), 400
 
     # 받은 데이터를 이용하여 처리 로직 수행
-    # data_to_process = request_data['data']
-
-    # 처리 함수 호출
-    result = do_prediction(json_data)
-
-    # 처리 결과를 JSON 형태로 응답
-    response = {'result': result}
-    return jsonify(response)
+    try:
+        result = do_prediction(json_data)
+        response = {'result': result}
+        return jsonify(response)
+    except Exception as e:
+        app.logger.error('Error processing data: %s', str(e))
+        return jsonify({'error': 'Error processing data'}), 500
 
 def do_prediction(json_data):
 
