@@ -7,6 +7,7 @@ myproject/
 .gitignore
 .dockerignore
 .env
+Jenkinsfile
 
 *.txt
 !requirements.txt
