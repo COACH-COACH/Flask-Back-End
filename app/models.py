@@ -58,7 +58,6 @@ class Goal(db.Model):
     USER_ID_FK = db.Column(db.Integer, db.ForeignKey('USER_TB.ID_PK'), nullable=False)  # 고객 ID
     GOAL_NAME = db.Column(db.String(100), nullable=False)  # 목표 분류(학자금, 여행, 어학연수, 전자기기 ...)
     TARGET_COST = db.Column(db.DECIMAL(19, 0), nullable=False)  # 목표 금액(최대 1경)
-    ACCUMULATED_BALANCE = db.Column(db.DECIMAL(19, 0), nullable=False, default=0)  # 누적 금액(최대 1경)
     GOAL_ST = db.Column(db.Boolean, nullable=False, default=False)  # 목표 달성 상태(0:진행 / 1:완료)
     GOAL_PERIOD = db.Column(db.Integer, nullable=False)  # 목표 기간(개월 단위)
     START_DATE = db.Column(db.Date, nullable=False)  # 시작일
@@ -70,7 +69,6 @@ class Goal(db.Model):
             'USER_ID_FK': self.USER_ID_FK,
             'GOAL_NAME': self.GOAL_NAME,
             'TARGET_COST': int(self.TARGET_COST) if self.TARGET_COST is not None else None,
-            'ACCUMULATED_BALANCE': int(self.ACCUMULATED_BALANCE) if self.ACCUMULATED_BALANCE is not None else None,
             'GOAL_ST': self.GOAL_ST,
             'GOAL_PERIOD': self.GOAL_PERIOD,
             'START_DATE': self.START_DATE.strftime('%Y-%m-%d') if self.START_DATE else None,

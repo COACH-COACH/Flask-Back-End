@@ -3,10 +3,9 @@
 venv/
 migrations/
 __pycache__/
-*pyc
-venv/
 migrations/
 coach-coach
 static
-
+logs/
+config/
 for_flask/
