@@ -6,6 +6,7 @@ from konlpy.tag import Okt
 from typing import List
 from elasticsearch import Elasticsearch
 from datetime import datetime, timedelta
+import config
 
 news = Blueprint('news_bp', __name__)
 
@@ -30,7 +31,7 @@ class OktTokenizer:
 def fetch_policy_news(start_date, end_date):
     url = 'http://apis.data.go.kr/1371000/policyNewsService/policyNewsList'
     params = {
-        'serviceKey': "3CMBhPv/8ZOqAWpYtL2gjJDh91ZhOX9I81Ju7VUC+x4UYfAdDYjs29TnTjM34RjdFNihnhKEy/rwhbvjmCYCLw==",
+        'serviceKey': config.news_api_key,
         'startDate': start_date,
         'endDate': end_date
     }
@@ -47,8 +48,7 @@ es = Elasticsearch(["http://52.78.112.2:9200"])
 
 def save_to_elasticsearch(news_list):
     for news in news_list:
-        response = es.index(index="news", document=news)
-        print(response['result'])
+        es.index(index="news", document=news)
 
 
 @news.route('/latest-news')
@@ -83,6 +83,7 @@ def index():
             news_date = item.find('ApproveDate').text
             news_description = item.find('DataContents').text
             news_url = item.find('OriginalUrl').text
+            news_img = item.find('OriginalimgUrl').text
 
             # 문자열을 datetime 객체로 파싱
             approve_date = datetime.strptime(news_date, "%m/%d/%Y %H:%M:%S")
@@ -116,7 +117,8 @@ def index():
                         'news_date': news_date,
                         'news_description': news_description,
                         'news_url': news_url,
-                        'news_keywords': matched_keys  # 모든 매칭된 키워드 조합
+                        'news_keywords': matched_keys,  # 모든 매칭된 키워드 조합
+                        'news_img': news_img
                     })
 
         # XML 파싱 후 사용한 메모리를 해제

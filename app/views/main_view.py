@@ -37,15 +37,9 @@ app.logger.addHandler(handler)
 bp = Blueprint('tester', __name__)
 
 # main_view에 user의 정보를 JSON 형태로 Get하는 예시 코드
-@bp.route('/', methods=['GET', 'POST'])
+@bp.route('/')
 def predict():
-    if request.method == "GET":
-        # 모든 User 객체 가져오기
-        users = User.query.all()
-        print(users)
-        # User 객체를 JSON으로 직렬화하여 반환
-
-        return jsonify([user.serialize() for user in users])
+    return 'Coach-Coach'
     
 @bp.route('/timeSeries', methods=['POST'])
 def process_data():

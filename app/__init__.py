@@ -13,6 +13,8 @@ db = SQLAlchemy()
 migrate = Migrate()
 
 def create_app():
+    load_dotenv()
+
     app = Flask(__name__)
     CORS(app)
     
@@ -20,14 +22,11 @@ def create_app():
 
     db.init_app(app)
     migrate.init_app(app, db)
-    load_dotenv()
 
     from .views import main_view, recommendation_view, news_view
     app.register_blueprint(main_view.bp)
     app.register_blueprint(recommendation_view.recommendation)
     app.register_blueprint(news_view.news)
-    app.config['SQLALCHEMY_DATABASE_URI'] = os.getenv("SQLALCHEMY_DATABASE_URI")
-    print("Database URI:", app.config['SQLALCHEMY_DATABASE_URI'])
 
     return app
 

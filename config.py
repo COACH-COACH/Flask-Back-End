@@ -18,11 +18,13 @@ myDBhost= os.environ.get('MYSQL_HOST')
 # db를 저장할 폴더/파일이름 
 BASE_DIR = os.path.dirname(__file__)
 ssl = 'ssl_verify_identity=True'
-SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{myDBid}:{myDBpw}@{myDBhost}/{myDBname}".format(os.path.join(BASE_DIR,'app.db'))
+SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{myDBid}:{myDBpw}@{myDBhost}/{myDBname}"
 # SQLALCHEMY_DATABASE_URI = f"mysql+pymysql://{myDBid}:{myDBpw}@{myDBhost}/{myDBname}?{ssl}".format(os.path.join(BASE_DIR,'app.db'))
 SQLALCHEMY_TRACK_MODIFICATIONS = False
 SECRET_KEY= mySecretKey
 
 # 또한 디버그모드를 False로 주고 ALLOWED_HOSTS를 '*'로 변경해줍니다.
-DEBUG = False
+DEBUG = True
 ALLOWED_HOSTS = ['*'] # 모든 ip에서 접근 가능하도록 설정
+
+news_api_key = os.getenv('NEWS_API_KEY')
