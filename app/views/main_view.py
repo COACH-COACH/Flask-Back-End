@@ -1,11 +1,38 @@
 # 라우트 및 라우트 핸들러를 정의하는 파일
-from flask import Blueprint, request, jsonify, current_app
+from flask import Flask, Blueprint, request, jsonify, current_app
 from app.models import *   # DB 모델 임포트
 import numpy as np
 import pandas as pd
 from sklearn.preprocessing import MinMaxScaler
-from keras.models import Sequential
-from keras.layers import LSTM, Dense
+from tensorflow.keras.models import Sequential
+from tensorflow.keras.layers import LSTM, Dense
+from tensorflow.keras.models import load_model as keras_load_model
+
+import logging
+import os
+
+# Flask 애플리케이션 설정
+app = Flask(__name__)
+app.logger.setLevel(logging.DEBUG)  # 로그 레벨 설정
+
+# 로거에 스트림 핸들러 추가
+handler = logging.StreamHandler()
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+app.logger.addHandler(handler)
+import logging
+
+# Flask 애플리케이션 설정
+app = Flask(__name__)
+app.logger.setLevel(logging.DEBUG)  # 로그 레벨 설정
+
+# 로거에 스트림 핸들러 추가
+handler = logging.StreamHandler()
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+app.logger.addHandler(handler)
 
 bp = Blueprint('tester', __name__)
 
@@ -22,27 +49,86 @@ def predict():
     
 @bp.route('/timeSeries', methods=['POST'])
 def process_data():
+    # 요청 로그 출력
+    app.logger.debug('Headers: %s', request.headers)
+    app.logger.debug('Body: %s', request.data.decode('utf-8'))  # 요청 본문을 UTF-8로 디코드하여 로그로 출력
+
     # JSON 데이터 받기
     json_data = request.get_json()
+    if json_data is None: # 올바르지 않은 JSON 형식
+        return jsonify({'error': 'Invalid JSON data'}), 400
 
     # 받은 데이터를 이용하여 처리 로직 수행
-    # data_to_process = request_data['data']
+    try:
+        result = do_prediction(json_data)
+        print(result)
+        response = {'result': result}
+        return jsonify(response)
+    except Exception as e:
+        app.logger.error('Error processing data: %s', str(e))
+        return jsonify({'error': 'Error processing data'}), 500
 
-    # 처리 함수 호출
-    result = do_prediction(json_data)
 
-    # 처리 결과를 JSON 형태로 응답
-    response = {'result': result}
-    return jsonify(response)
+# LSTM 모델 불러오기
+def load_model():
+    parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir))
+    model_path = os.path.join(parent_dir, 'model3.keras')
+    lstm_model = keras_load_model(model_path)
+    print(model_path)
+    return lstm_model
 
 def do_prediction(json_data):
 
-    # JSON 데이터를 받아옴
-    # data = request.json
+    # # JSON 데이터를 받아옴
+    # # data = request.json
 
-    # JSON 데이터를 DataFrame으로 변환
-    df = pd.DataFrame(json_data)
+    # # JSON 데이터를 DataFrame으로 변환
+    # df = pd.DataFrame(json_data)
+    # scaler = MinMaxScaler()
+    # df['TOT_USE_AM_normalized'] = scaler.fit_transform(df[['consumption']])
 
+    # # 데이터를 정렬하고 정규화
+    # # df_sorted = df.sort_values(by='paymentQuarter')
+    # # scaler = MinMaxScaler()
+    # # df_sorted['consumption_normalized'] = scaler.fit_transform(df_sorted[['consumption']])
+    # # seq_data = df_sorted['consumption_normalized'].values
+
+    
+    # # BAS_YH 열을 기준으로 데이터프레임 정렬
+    # df_sorted = df.sort_values(by='paymentQuarter')
+
+    # # 해당 SEQ에 대한 행의 개수 확인
+    # if len(df_sorted) <= 2:
+    #     print("과거 분기 데이터가 2개 이하 : 예측에 필요한 데이터가 부족합니다.")
+    #     return
+
+    # seq_data = df_sorted['TOT_USE_AM_normalized'].values
+
+    
+    # # 시퀀스 길이 설정
+    # look_back = 3
+
+    # # # 마지막 시퀀스 데이터 준비
+    # # if len(seq_data) < look_back:
+    # #     raise ValueError(f"시퀀스 길이 {look_back}에 필요한 데이터가 충분하지 않습니다.")
+        
+    # last_seq_data = seq_data[-look_back:].reshape((look_back, 1))
+    
+    # # 모델 불러오기
+    # lstm_model = load_model()
+
+    # # 예측 수행
+    # predicted_data_normalized = lstm_model.predict(last_seq_data)
+    # print(predicted_data_normalized)
+
+    # # 원래 스케일로 복원
+    # predicted_data = scaler.inverse_transform(predicted_data_normalized)
+
+    # # 다음 분기 소비 예측량
+    # return float(round(predicted_data[0][0], 2))
+
+
+    df = pd.DataFrame(json_data)  
     # 데이터 정규화
     scaler = MinMaxScaler()
     df['TOT_USE_AM_normalized'] = scaler.fit_transform(df[['consumption']])
@@ -59,6 +145,7 @@ def do_prediction(json_data):
     # 시퀀스 길이와 특징 수 설정
     seq_length = 2  # 시퀀스 길이 - 시퀀스 길이란 LSTM 모델에 입력될 때 한 번에 고려될 데이터 포인트(타임스텝)의 수
     n_features = 1  # 특징 수
+
 
     # LSTM 모델 정의
     model = Sequential([
