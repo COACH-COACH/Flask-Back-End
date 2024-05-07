@@ -10,7 +10,18 @@ from tensorflow.keras.models import load_model as keras_load_model
 
 import logging
 import os
-import joblib
+
+# Flask 애플리케이션 설정
+app = Flask(__name__)
+app.logger.setLevel(logging.DEBUG)  # 로그 레벨 설정
+
+# 로거에 스트림 핸들러 추가
+handler = logging.StreamHandler()
+handler.setLevel(logging.DEBUG)
+formatter = logging.Formatter('%(asctime)s - %(levelname)s - %(message)s')
+handler.setFormatter(formatter)
+app.logger.addHandler(handler)
+import logging
 
 # Flask 애플리케이션 설정
 app = Flask(__name__)
@@ -66,7 +77,6 @@ def load_model():
     print(model_path)
     return lstm_model
 
-
 def do_prediction(json_data):
 
     # # JSON 데이터를 받아옴
@@ -113,8 +123,8 @@ def do_prediction(json_data):
 
     # 원래 스케일로 복원
     predicted_data = scaler.inverse_transform(predicted_data_normalized)
-    # print('텐서플로 버전 --------------------', tf.__version__)
-    print(f"예측된 다음 분기의 소비량: {predicted_data[0][0]}")
+
+    # 다음 분기 소비 예측량
     return float(round(predicted_data[0][0], 2))
 
 
