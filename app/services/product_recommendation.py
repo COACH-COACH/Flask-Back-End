@@ -25,8 +25,8 @@ def load_model():
 
 # 0. life_stage별 csv 파일 로드하기
 def load_csv_file():
-  # parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir))
-  parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
+  parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir, os.pardir))
+  # parent_dir = os.path.abspath(os.path.join(os.path.dirname(__file__), os.pardir))
   static_folder_path = os.path.join(parent_dir, 'static')
 
   life_stage_df = {
