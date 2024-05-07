@@ -83,79 +83,17 @@ def do_prediction(json_data):
     # # data = request.json
 
     # # JSON 데이터를 DataFrame으로 변환
-    df = pd.DataFrame(json_data)
-    scaler = MinMaxScaler()
-    df['TOT_USE_AM_normalized'] = scaler.fit_transform(df[['consumption']])
-
-    # 데이터를 정렬하고 정규화
-    # df_sorted = df.sort_values(by='paymentQuarter')
-    # scaler = MinMaxScaler()
-    # df_sorted['consumption_normalized'] = scaler.fit_transform(df_sorted[['consumption']])
-    # seq_data = df_sorted['consumption_normalized'].values
-
-    
-    # BAS_YH 열을 기준으로 데이터프레임 정렬
-    df_sorted = df.sort_values(by='paymentQuarter')
-
-    # 해당 SEQ에 대한 행의 개수 확인
-    if len(df_sorted) <= 2:
-        print("과거 분기 데이터가 2개 이하 : 예측에 필요한 데이터가 부족합니다.")
-        return
-
-    seq_data = df_sorted['TOT_USE_AM_normalized'].values
-
-    
-    # 시퀀스 길이 설정
-    look_back = 3
-
-    # # 마지막 시퀀스 데이터 준비
-    # if len(seq_data) < look_back:
-    #     raise ValueError(f"시퀀스 길이 {look_back}에 필요한 데이터가 충분하지 않습니다.")
-        
-    last_seq_data = seq_data[-look_back:].reshape((look_back, 1))
-    
-    # 모델 불러오기
-    lstm_model = load_model()
-
-    # 예측 수행
-    predicted_data_normalized = lstm_model.predict(last_seq_data)
-    print(predicted_data_normalized)
-
-    # 원래 스케일로 복원
-    predicted_data = scaler.inverse_transform(predicted_data_normalized)
-
-    # 다음 분기 소비 예측량
-    return float(round(predicted_data[0][0], 2))
-
-
-    # df = pd.DataFrame(json_data)  
-    # # 데이터 정규화
+    # df = pd.DataFrame(json_data)
     # scaler = MinMaxScaler()
     # df['TOT_USE_AM_normalized'] = scaler.fit_transform(df[['consumption']])
 
-    # # 시퀀스 생성 함수
-    # def create_sequences(data, seq_length):
-    #     X = []
-    #     y = []
-    #     for i in range(len(data) - seq_length):
-    #         X.append(data[i:i + seq_length])
-    #         y.append(data[i + seq_length])
-    #     return np.array(X), np.array(y)
+    # # 데이터를 정렬하고 정규화
+    # # df_sorted = df.sort_values(by='paymentQuarter')
+    # # scaler = MinMaxScaler()
+    # # df_sorted['consumption_normalized'] = scaler.fit_transform(df_sorted[['consumption']])
+    # # seq_data = df_sorted['consumption_normalized'].values
 
-    # # 시퀀스 길이와 특징 수 설정
-    # seq_length = 2  # 시퀀스 길이 - 시퀀스 길이란 LSTM 모델에 입력될 때 한 번에 고려될 데이터 포인트(타임스텝)의 수
-    # n_features = 1  # 특징 수
-
-
-    # # LSTM 모델 정의
-    # model = Sequential([
-    #     LSTM(50, input_shape=(seq_length, n_features)),
-    #     Dense(1)
-    # ])
-
-    # # 모델 컴파일
-    # model.compile(optimizer='adam', loss='mse')
-
+    
     # # BAS_YH 열을 기준으로 데이터프레임 정렬
     # df_sorted = df.sort_values(by='paymentQuarter')
 
@@ -166,21 +104,83 @@ def do_prediction(json_data):
 
     # seq_data = df_sorted['TOT_USE_AM_normalized'].values
 
-    # # 시퀀스 생성
-    # X_seq, y_seq = create_sequences(seq_data, seq_length)
-    # X_seq = X_seq.reshape((X_seq.shape[0], X_seq.shape[1], n_features))
+    
+    # # 시퀀스 길이 설정
+    # look_back = 3
 
-    # # 모델 훈련
-    # model.fit(X_seq, y_seq, epochs=30, verbose=0)
+    # # # 마지막 시퀀스 데이터 준비
+    # # if len(seq_data) < look_back:
+    # #     raise ValueError(f"시퀀스 길이 {look_back}에 필요한 데이터가 충분하지 않습니다.")
+        
+    # last_seq_data = seq_data[-look_back:].reshape((look_back, 1))
+    
+    # # 모델 불러오기
+    # lstm_model = load_model()
 
-    # # # 마지막 시퀀스 데이터 가져오기
-    # last_seq_data = seq_data[-seq_length:].reshape((1, seq_length, n_features))
+    # # 예측 수행
+    # predicted_data_normalized = lstm_model.predict(last_seq_data)
+    # print(predicted_data_normalized)
 
-    # # # 예측 수행
-    # predicted_data_normalized = model.predict(last_seq_data)
-
-    # # # 원래 스케일로 복원
+    # # 원래 스케일로 복원
     # predicted_data = scaler.inverse_transform(predicted_data_normalized)
 
     # # 다음 분기 소비 예측량
     # return float(round(predicted_data[0][0], 2))
+
+
+    df = pd.DataFrame(json_data)  
+    # 데이터 정규화
+    scaler = MinMaxScaler()
+    df['TOT_USE_AM_normalized'] = scaler.fit_transform(df[['consumption']])
+
+    # 시퀀스 생성 함수
+    def create_sequences(data, seq_length):
+        X = []
+        y = []
+        for i in range(len(data) - seq_length):
+            X.append(data[i:i + seq_length])
+            y.append(data[i + seq_length])
+        return np.array(X), np.array(y)
+
+    # 시퀀스 길이와 특징 수 설정
+    seq_length = 2  # 시퀀스 길이 - 시퀀스 길이란 LSTM 모델에 입력될 때 한 번에 고려될 데이터 포인트(타임스텝)의 수
+    n_features = 1  # 특징 수
+
+
+    # LSTM 모델 정의
+    model = Sequential([
+        LSTM(50, input_shape=(seq_length, n_features)),
+        Dense(1)
+    ])
+
+    # 모델 컴파일
+    model.compile(optimizer='adam', loss='mse')
+
+    # BAS_YH 열을 기준으로 데이터프레임 정렬
+    df_sorted = df.sort_values(by='paymentQuarter')
+
+    # 해당 SEQ에 대한 행의 개수 확인
+    if len(df_sorted) <= 2:
+        print("과거 분기 데이터가 2개 이하 : 예측에 필요한 데이터가 부족합니다.")
+        return
+
+    seq_data = df_sorted['TOT_USE_AM_normalized'].values
+
+    # 시퀀스 생성
+    X_seq, y_seq = create_sequences(seq_data, seq_length)
+    X_seq = X_seq.reshape((X_seq.shape[0], X_seq.shape[1], n_features))
+
+    # 모델 훈련
+    model.fit(X_seq, y_seq, epochs=30, verbose=0)
+
+    # # 마지막 시퀀스 데이터 가져오기
+    last_seq_data = seq_data[-seq_length:].reshape((1, seq_length, n_features))
+
+    # # 예측 수행
+    predicted_data_normalized = model.predict(last_seq_data)
+
+    # # 원래 스케일로 복원
+    predicted_data = scaler.inverse_transform(predicted_data_normalized)
+
+    # 다음 분기 소비 예측량
+    return float(round(predicted_data[0][0], 2))
