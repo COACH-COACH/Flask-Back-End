@@ -30,7 +30,7 @@ node {
         }
         
         stage('Cleaning Up') {
-        	sh 'sudo docker rmi ${DOCKER_USER_ID}/flask-server:${BUILD_NUMBER}'
+        	sh 'sudo docker system prune --all --volumes --force'
         }
     }
 }
